@@ -92,31 +92,44 @@ class List {
 //----------------------------------------------------------
 class ListExec : Gtk.ListBox {	// 纯显示内容。不做数据处理
 	const string[] color = {"#3465a4", "#ce5c00", "#73d216", "#f57900"};	// 循环的颜色表
-	int cindex = 0;	// 颜色索引，建立颜色散列表
 	HashTable<string, int> hash = new HashTable<string, int> (str_hash, str_equal);
 
 // 构造函数，参数：list为“显示文字#标签”
 	public ListExec(string[] list){
-		int maxflaglen = 1;
-		foreach (string s in list){	// 计算标签最大长度
-			string[] a = s.split("#", 2);
-			if(a[1]==null){a[1]="";}
-			if(maxflaglen < a[1].length){maxflaglen = a[1].length;}
+		int maxlen = 1;
+		string[] a;
+		string flag;
+		for(int i = 0; i < list.length; i++){	// 计算标签最大长度，并补充缺少的flag。
+			if(list[i].chomp()==""){continue;}
+			if(list[i].contains("#")){
+				a = list[i].split("#", 2);
+				if(maxlen<a[1].length){maxlen = a[1].length;}
+			}else{			// 没有#标签的，使用扩展名当标签
+				flag = " ";
+				a = list[i].split(".", -1);
+				if(a.length>=2){ flag = a[a.length-1]; }
+				if(flag==null){flag = " ";}
+				if(maxlen<flag.length){maxlen = flag.length;}
+				list[i] = list[i]+"#"+flag;
+			}
 		}
+//-----------------------------		
+		int cindex = 0;	// 颜色索引，建立颜色散列表
 		foreach (string s in list){
-			if(s==""){continue;}
+			if(s.chomp()==""){continue;}
+			a = s.split("#", 2);
+			flag = a[1];
+			string name = a[0].substring(a[0].last_index_of("/")+1);	//显示时，去掉路径
+// 处理彩色的标签
+			string fill = string.nfill(maxlen-flag.length,' ');	// 前导填充空格
+			if(! hash.contains(flag)){	// 增加颜色索引
+				hash.insert(flag, cindex); cindex++; cindex%=color.length;
+			}
+// 添加Lable
 			var lbl = new Gtk.Label("");
 			lbl.xalign = (float)0;
-// 处理彩色的标签
-			string[] a = s.split("#", 2);
-			string name = a[0].substring(a[0].last_index_of("/")+1);	//显示时，去掉路径
-			if(a[1]==null){a[1]="";}	// 空字符串也有颜色
-			string fill = string.nfill(maxflaglen-a[1].length,' ');	// 前导填充空格
-			if(! hash.contains(a[1])){	// 增加颜色索引
-				hash.insert(a[1], cindex); cindex++; cindex%=color.length;
-			}
-			lbl.set_markup(fill+"<span background=\""+color[hash.get(a[1])]+
-			"\"	foreground=\"#ffffff\"><b> "+a[1]+" </b></span><big>  "+name+" </big>");
+			lbl.set_markup(fill+"<span background=\""+color[hash.get(flag)]+
+			"\"	foreground=\"#ffffff\"><b> "+flag+" </b></span><big>  "+name+" </big>");
 			this.insert(lbl, -1);
 		}
 	}

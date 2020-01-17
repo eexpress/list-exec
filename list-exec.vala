@@ -26,7 +26,7 @@ int main(string[] args)
 	string ls_stdout; string ls_stderr; int ls_status;
 //-----------------------------------------
 	try{
-		file.load_from_file(args[1], KeyFileFlags.NONE);
+		file.load_from_file((args[1]!=null)?args[1]:"conf.ini", KeyFileFlags.NONE);
 		while(true){
 			title = file.get_string("Key",windex.to_string());
 //			if(title==null){continue;}	// 判断失效，被 catch 中断了。除非每句get_string都单独try。

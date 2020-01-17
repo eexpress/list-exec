@@ -13,7 +13,6 @@ int main(string[] args)
 
     window.title = "通用侧栏";
     window.set_position (Gtk.WindowPosition.CENTER);
-    window.set_default_size (500, 600);
     window.destroy.connect (Gtk.main_quit);
 
 	var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
@@ -30,7 +29,7 @@ int main(string[] args)
 		file.load_from_file(args[1], KeyFileFlags.NONE);
 		while(true){
 			title = file.get_string("Key",windex.to_string());
-			if(title==null){break;}
+//			if(title==null){continue;}	// 判断失效，被 catch 中断了。除非每句get_string都单独try。
 			windex++; if(windex>5){break;}
 			shellcmd = file.get_string(title,"List");
 //-----------------------------------------
@@ -44,9 +43,15 @@ int main(string[] args)
 			lst[windex] = new List();
 			box.pack_start (lst[windex].show(list, cmd, title, show_search), true, true, 0);
 		}
-	} catch (Error e) {print ("%s\n", e.message);}
+	} catch(Error e){ print ("catch => %s\n", e.message); }
 //-----------------------------------------
     window.add(box);
+    window.set_default_size(500, 300+(windex-1)*150);
+    window.move(0,0);
+//    Gdk.Rectangle r = Gdk.Display.get_primary_monitor.geometry;
+//    Gdk.Rectangle r = Gdk.Display.get_monitor_at_window(window).geometry;
+//    Gdk.Rectangle r = (Gdk.Rectangle)Gdk.Monitor.get_geometry();
+//    print("---------"+r.height.to_string()+"-------------\n");
     window.show_all();
     Gtk.main ();
     return 0;

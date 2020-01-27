@@ -20,10 +20,10 @@ int main(string[] args)
 	box.margin = 5;
 	box.set_spacing(5);
 //-----------------------------------------
-	List[] lst = new List[5];
+	List[] lst = new List[5];	// 最多读取5个栏目。
 	KeyFile file = new KeyFile ();
 	int windex=1; string shellcmd;
-	string[] list; string cmd; string title; bool show_search;
+	string[] list; string cmd; string title; bool show_search; string check;
 	string ls_stdout; string ls_stderr; int ls_status;
 //-----------------------------------------
 	try{
@@ -31,18 +31,25 @@ int main(string[] args)
 		while(true){
 			title = file.get_string("Key",windex.to_string());
 //			if(title==null){continue;}	// 判断失效，被 catch 中断了。除非每句get_string都单独try。
-			windex++; if(windex>5){break;}
-			shellcmd = file.get_string(title,"List");
+			windex++; if(windex>5){break;}	// 最多读取5个栏目。
 //-----------------------------------------
+			shellcmd = file.get_string(title,"List");
 //			Process.spawn_command_line_sync ("sh -c \"%s\"".printf(shellcmd),
 			Process.spawn_command_line_sync (shellcmd,
 			out ls_stdout, out ls_stderr, out ls_status);
 			if(ls_status!=0){ list = ls_stderr.split("\n"); }
 			else{ list = ls_stdout.split("\n"); }
+//-----------------------------------------
+			shellcmd = file.get_string(title,"Check");
+			Process.spawn_command_line_sync (shellcmd,
+			out ls_stdout, out ls_stderr, out ls_status);
+			if(ls_status!=0){ check = ""; print(ls_stderr); }
+			else{ check = ls_stdout.chomp(); print(ls_stdout); }
+//-----------------------------------------
 			cmd = file.get_string(title,"Exec");
 			show_search = file.get_boolean(title,"Search");
 			lst[windex] = new List();
-			box.pack_start (lst[windex].show(list, cmd, title, show_search), true, true, 0);
+			box.pack_start (lst[windex].show(list, cmd, title, show_search, check), true, true, 0);
 		}
 	} catch(Error e){ print ("catch => %s\n", e.message); }
 //-----------------------------------------
@@ -83,9 +90,9 @@ int main(string[] args)
 //----------------------------------------------------------
 class List {
 	string[] mylist; string mycmd;
-	public Gtk.Widget show(string[] list, string cmd, string title, bool show_search){
+	public Gtk.Widget show(string[] list, string cmd, string title, bool show_search, string check){
 		mylist = list; mycmd = cmd;
-		var l = new ListExec(list);
+		var l = new ListExec(list, check);
 		l.row_selected.connect((row)=>{
 			string[] a = mylist[row.get_index()].split("#", 2);
 			Posix.system("%s \"%s\" &".printf(mycmd, a[0]));	//包裹文件参数。后台执行。
@@ -118,7 +125,8 @@ class ListExec : Gtk.ListBox {	// 纯显示内容。不做数据处理
 	HashTable<string, int> hash = new HashTable<string, int> (str_hash, str_equal);
 
 // 构造函数，参数：list为“显示文字#标签”
-	public ListExec(string[] list){
+	public ListExec(string[] list, string check){
+//		this.set_selection_mode(Gtk.SelectionMode.SINGLE);
 		int maxlen = 1;
 		string[] a;
 		string flag;
@@ -138,6 +146,7 @@ class ListExec : Gtk.ListBox {	// 纯显示内容。不做数据处理
 		}
 //-----------------------------		
 		int cindex = 0;	// 颜色索引，建立颜色散列表
+		int ii=0;	// 为了高亮。ListBox没有length属性，不能获取最后一个row。
 		foreach (string s in list){
 			if(s.chomp()==""){continue;}
 			a = s.split("#", 2);
@@ -154,6 +163,10 @@ class ListExec : Gtk.ListBox {	// 纯显示内容。不做数据处理
 			lbl.set_markup(fill+"<span background=\""+color[hash.get(flag)]+
 			"\"	foreground=\"#ffffff\"><b> "+flag+" </b></span><big>  "+name+" </big>");
 			this.insert(lbl, -1);
+			if(name==check){
+				this.select_row(get_row_at_index(ii));
+			}
+			ii++;
 		}
 	}
 }

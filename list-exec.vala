@@ -53,10 +53,32 @@ int main(string[] args)
 //    Gdk.Rectangle r = (Gdk.Rectangle)Gdk.Monitor.get_geometry();
 //    print("---------"+r.height.to_string()+"-------------\n");
     window.show_all();
+//    check();
     Gtk.main ();
     return 0;
 }
 //----------------------------------------------------------
+//void check(){
+//	SettingsSchemaSource sss = GLib.SettingsSchemaSource.get_default ();
+//	SettingsSchema schema = sss.lookup ("org.gnome.system.proxy", true);	// bool recursive
+//	if (schema == null) {print ("ID not found."); return;}
+
+//	if(schema.has_key ("mode")){
+//		SettingsSchemaKey ssk = schema.get_key ("mode");
+//		Variant v = ssk.get_range();
+//		size_t length = 0;
+//		print("name: %s\n", ssk.get_name());	//mode
+//		print ("range: %s, %s\n", v.get_string (out length), length.to_string());
+////		print ("'%s', %"+size_t.FORMAT+"\n", v.get_string (out length), length);
+//	}else{ print("no key found: mode\n"); return;}
+
+//	GLib.Settings settings = new GLib.Settings.full (schema, null, null);
+//	string greeting = settings.get_string ("mode");
+//	print("current mode: %s\n", greeting);
+//}
+	
+//	var ss = new GLib.Settings ("org.gnome.system.proxy");
+//	string sm = ss.get_string ("mode");
 //----------------------------------------------------------
 class List {
 	string[] mylist; string mycmd;

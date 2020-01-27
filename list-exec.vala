@@ -8,6 +8,7 @@ using Gtk;
 
 int main(string[] args)
 {
+	Environment.set_current_dir(Path.get_dirname(args[0]));
     Gtk.init (ref args);
     var window = new Gtk.Window ();
 

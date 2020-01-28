@@ -40,14 +40,22 @@ int main(string[] args)
 			if(ls_status!=0){ list = ls_stderr.split("\n"); }
 			else{ list = ls_stdout.split("\n"); }
 //-----------------------------------------
-			shellcmd = file.get_string(title,"Check");
-			Process.spawn_command_line_sync (shellcmd,
-			out ls_stdout, out ls_stderr, out ls_status);
-			if(ls_status!=0){ check = ""; print(ls_stderr); }
-			else{ check = ls_stdout.chomp(); print(ls_stdout); }
+//			try{
+//			} catch(Error e){ print ("catch => %s\n", e.message); }
+			check = "";		// 增加catch后，Check段可省略。
+			try{
+				shellcmd = file.get_string(title,"Check");
+				Process.spawn_command_line_sync (shellcmd,
+				out ls_stdout, out ls_stderr, out ls_status);
+				if(ls_status!=0){ check = ""; print(ls_stderr); }
+				else{ check = ls_stdout.chomp(); print(ls_stdout); }
+			} catch(Error e){ print ("catch => %s\n", e.message); }
 //-----------------------------------------
 			cmd = file.get_string(title,"Exec");
-			show_search = file.get_boolean(title,"Search");
+			show_search = false;	// 缺省无搜索
+			try{
+				show_search = file.get_boolean(title,"Search");
+			} catch(Error e){ print ("catch => %s\n", e.message); }
 			lst[windex] = new List();
 			box.pack_start (lst[windex].show(list, cmd, title, show_search, check), true, true, 0);
 		}

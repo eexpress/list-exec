@@ -30,13 +30,13 @@ int main(string[] args)
 		file.load_from_file((args[1]!=null)?args[1]:"conf.ini", KeyFileFlags.NONE);
 		while(true){
 			title = file.get_string("Key",windex.to_string());
-			print(title+"==========\n");
+//			print(title+"==========\n");
 //			if(title==null){continue;}	// 判断失效，被 catch 中断了。除非每句get_string都单独try。
 			windex++; if(windex>5){break;}	// 最多读取5个栏目。
 //-----------------------------------------
 //			shellcmd = "bash -c \""+file.get_string(title,"List").escape("0x7F-0xFF")+"\"";
 			shellcmd = "bash -c \""+file.get_string(title,"List").replace("\"","\\\"")+"\"";
-			print("shellcmd: %s\n", shellcmd);
+//			print("shellcmd: %s\n", shellcmd);
 			Process.spawn_command_line_sync (shellcmd,
 			out ls_stdout, out ls_stderr, out ls_status);
 			if(ls_status!=0){ list = ls_stderr.split("\n"); }
@@ -101,7 +101,7 @@ class List {
 	public Gtk.Widget show(string[] list, string cmd, string title, bool show_search, string check){
 		mylist = list; mycmd = cmd;
 		var l = new ListExec(list, check);
-		l.row_selected.connect((row)=>{
+		l.row_activated.connect((row)=>{
 			string[] a = mylist[row.get_index()].split("#", 2);
 			Posix.system("%s \"%s\" &".printf(mycmd, a[0]));	//包裹文件参数。后台执行。
 		});

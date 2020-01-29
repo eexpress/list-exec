@@ -30,32 +30,32 @@ int main(string[] args)
 		file.load_from_file((args[1]!=null)?args[1]:"conf.ini", KeyFileFlags.NONE);
 		while(true){
 			title = file.get_string("Key",windex.to_string());
+			print(title+"==========\n");
 //			if(title==null){continue;}	// 判断失效，被 catch 中断了。除非每句get_string都单独try。
 			windex++; if(windex>5){break;}	// 最多读取5个栏目。
 //-----------------------------------------
-			shellcmd = file.get_string(title,"List");
-//			Process.spawn_command_line_sync ("sh -c \"%s\"".printf(shellcmd),
+//			shellcmd = "bash -c \""+file.get_string(title,"List").escape("0x7F-0xFF")+"\"";
+			shellcmd = "bash -c \""+file.get_string(title,"List").replace("\"","\\\"")+"\"";
+			print("shellcmd: %s\n", shellcmd);
 			Process.spawn_command_line_sync (shellcmd,
 			out ls_stdout, out ls_stderr, out ls_status);
 			if(ls_status!=0){ list = ls_stderr.split("\n"); }
 			else{ list = ls_stdout.split("\n"); }
 //-----------------------------------------
-//			try{
-//			} catch(Error e){ print ("catch => %s\n", e.message); }
-			check = "";		// 增加catch后，Check段可省略。
-			try{
-				shellcmd = file.get_string(title,"Check");
-				Process.spawn_command_line_sync (shellcmd,
-				out ls_stdout, out ls_stderr, out ls_status);
-				if(ls_status!=0){ check = ""; print(ls_stderr); }
-				else{ check = ls_stdout.chomp(); print(ls_stdout); }
-			} catch(Error e){ print ("catch => %s\n", e.message); }
+			check="x";		// 增加catch后，Check段可省略。
+		try{
+			shellcmd = "bash -c \""+file.get_string(title,"Check").replace("\"","\\\"")+"\"";
+			Process.spawn_command_line_sync (shellcmd,
+			out ls_stdout, out ls_stderr, out ls_status);
+			if(ls_status!=0){ print(ls_stderr); }
+			else{ check = ls_stdout.chomp(); }
+		} catch(Error e){ print ("catch => %s\n", e.message); }
 //-----------------------------------------
 			cmd = file.get_string(title,"Exec");
 			show_search = false;	// 缺省无搜索
-			try{
-				show_search = file.get_boolean(title,"Search");
-			} catch(Error e){ print ("catch => %s\n", e.message); }
+		try{
+			show_search = file.get_boolean(title,"Search");
+		} catch(Error e){ print ("catch => %s\n", e.message); }
 			lst[windex] = new List();
 			box.pack_start (lst[windex].show(list, cmd, title, show_search, check), true, true, 0);
 		}

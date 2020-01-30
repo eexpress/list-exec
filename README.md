@@ -11,13 +11,6 @@
 --|--
 ![](./list-exec.png)|![](./conf.ini.png)
 
-![](./conf.ini.png){: width="783px"}
-
-![](./conf.ini.png =100%)
-
-<img src="./conf.ini.png" width = 60%  />
-
-
 ## 配置文件格式
 
 > 配置文件格式，直接看`conf.ini`里面的说明。

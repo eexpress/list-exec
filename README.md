@@ -11,6 +11,8 @@
 
 ![](./conf.ini.png){: width="783px"}
 
+<img src="./conf.ini.png" width = 60%  />
+
 
 ## 配置文件格式
 

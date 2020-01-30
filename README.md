@@ -9,7 +9,7 @@
 
 ![](./list-exec.png)
 
-![](./conf.ini.png){:width=100%}
+![](./conf.ini.png){:width=783}
 
 
 ## 配置文件格式

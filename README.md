@@ -5,7 +5,10 @@
 
 > 执行时，指定ini格式文件。不指定时，使用同目录的`conf.ini`。
 
+---
+
 ![](./list-exec.png)
+
 ![](./conf.ini.png){:width=100%}
 
 

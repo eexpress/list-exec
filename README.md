@@ -11,7 +11,7 @@
 
 ![](./conf.ini.png){: width="783px"}
 
-![](./conf.ini.png = 100)
+![](./conf.ini.png =100)
 
 <img src="./conf.ini.png" width = 60%  />
 

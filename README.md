@@ -7,7 +7,9 @@
 
 ---
 
-![](./list-exec.png)
+截图|配置
+--|--
+![](./list-exec.png)|![](./conf.ini.png)
 
 ![](./conf.ini.png){: width="783px"}
 

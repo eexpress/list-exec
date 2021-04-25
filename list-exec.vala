@@ -1,7 +1,6 @@
 //----------------------------------------------------------
 //devhelp里面的 Namespace 使用 using; Package 使用 --pkg。
 //! valac --pkg gtk+-3.0  --pkg posix "%f"
-// ./Gbar conf.ini
 //----------------------------------------------------------
 
 using Gtk;
@@ -62,7 +61,10 @@ int main(string[] args)
 	} catch(Error e){ print ("catch => %s\n", e.message); }
 //-----------------------------------------
     window.add(box);
-    window.set_default_size(500, 300+(windex-1)*150);
+    int wheight = 300+(windex-1)*150;
+    if(wheight<600){wheight=600;}
+    if(wheight>900){wheight=900;}
+    window.set_default_size(500, wheight);
     window.move(0,0);
 //    Gdk.Rectangle r = Gdk.Display.get_primary_monitor.geometry;
 //    Gdk.Rectangle r = Gdk.Display.get_monitor_at_window(window).geometry;
@@ -92,7 +94,7 @@ int main(string[] args)
 //	string greeting = settings.get_string ("mode");
 //	print("current mode: %s\n", greeting);
 //}
-	
+
 //	var ss = new GLib.Settings ("org.gnome.system.proxy");
 //	string sm = ss.get_string ("mode");
 //----------------------------------------------------------
@@ -125,7 +127,7 @@ class List {
 		s.add(l);
 		b.pack_start (s, true, true, 0);
 		return b;
-	}	
+	}
 }
 //----------------------------------------------------------
 class ListExec : Gtk.ListBox {	// 纯显示内容。不做数据处理
@@ -152,7 +154,7 @@ class ListExec : Gtk.ListBox {	// 纯显示内容。不做数据处理
 				list[i] = list[i]+"#"+flag;
 			}
 		}
-//-----------------------------		
+//-----------------------------
 		int cindex = 0;	// 颜色索引，建立颜色散列表
 		int ii=0;	// 为了高亮。ListBox没有length属性，不能获取最后一个row。
 		foreach (string s in list){
@@ -169,7 +171,7 @@ class ListExec : Gtk.ListBox {	// 纯显示内容。不做数据处理
 			var lbl = new Gtk.Label("");
 			lbl.xalign = (float)0;
 			lbl.set_markup(fill+"<span background=\""+color[hash.get(flag)]+
-			"\"	foreground=\"#ffffff\"><b> "+flag+" </b></span><big>  "+name+" </big>");
+			"\"	foreground=\"#ffffff\"><b> "+flag+" </b></span>  "+name+"");
 			this.insert(lbl, -1);
 			if(name==check){
 				this.select_row(get_row_at_index(ii));
